@@ -1,0 +1,10 @@
+{
+  "customer": {
+    "name": "Prerequisite Customer"
+  },
+  "product": {
+    "name": "Prerequisite Product",
+    "sku": "PRE-SKU",
+    "price": "25.00"
+  }
+}

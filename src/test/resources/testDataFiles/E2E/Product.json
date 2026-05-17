@@ -1,0 +1,8 @@
+{
+  "product": {
+    "name": "Demo Product",
+    "sku": "SKU-"
+  },
+  "successMessage": "Product created successfully",
+  "approvedStatus": "active"
+}

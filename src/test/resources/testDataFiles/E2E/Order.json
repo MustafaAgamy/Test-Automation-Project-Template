@@ -1,0 +1,8 @@
+{
+  "order": {
+    "reference": "ORD-"
+  },
+  "approvedStatus": "approved",
+  "draftStatus": "draft",
+  "noResultsMessage": "No records found"
+}

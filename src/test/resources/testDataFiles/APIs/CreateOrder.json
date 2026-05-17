@@ -1,0 +1,7 @@
+{
+  "reference": "{{reference}}",
+  "customer_name": "{{customerName}}",
+  "product_name": "{{productName}}",
+  "quantity": "{{quantity}}",
+  "unit_price": "{{unitPrice}}"
+}
