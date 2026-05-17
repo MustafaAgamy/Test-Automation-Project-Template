@@ -1,0 +1,61 @@
+package com.example.automation.pages.products;
+
+import com.example.automation.utils.BrowserActions;
+import com.example.automation.utils.CustomMethods;
+import com.example.automation.utils.TestData;
+import com.shaft.driver.SHAFT;
+import io.qameta.allure.Step;
+import org.openqa.selenium.By;
+
+public class CreateProductPage {
+
+    private final SHAFT.GUI.WebDriver driver;
+
+    private final By nameField = By.id("product_name");
+    private final By skuField = By.id("product_sku");
+    private final By priceField = By.id("product_price");
+    private final By saveButton = By.cssSelector("button.save-product");
+    private final By successMessage = By.cssSelector(".alert-success");
+
+    public CreateProductPage(SHAFT.GUI.WebDriver driver) {
+        this.driver = driver;
+    }
+
+    @Step("Navigate to create product page")
+    public CreateProductPage navigateToCreateProduct() {
+        BrowserActions.navigateV3(driver, System.getProperty("baseUri") + "products/new");
+        return this;
+    }
+
+    @Step("Type product name")
+    public CreateProductPage typeName(String name) {
+        CustomMethods.setValueForControlledInput(driver, nameField,
+                name + TestData.getString(TestData.TestDataKey.UUID));
+        return this;
+    }
+
+    @Step("Type product SKU")
+    public CreateProductPage typeSku(String sku) {
+        CustomMethods.setValueForControlledInput(driver, skuField,
+                sku + TestData.getString(TestData.TestDataKey.UUID));
+        return this;
+    }
+
+    @Step("Type product price")
+    public CreateProductPage typePrice(String price) {
+        driver.element().type(priceField, price);
+        return this;
+    }
+
+    @Step("Save product")
+    public CreateProductPage save() {
+        driver.element().click(saveButton);
+        return this;
+    }
+
+    @Step("Validate product was created successfully")
+    public CreateProductPage validateCreatedSuccessfully(String expectedMessage) {
+        driver.assertThat().element(successMessage).text().isEqualTo(expectedMessage);
+        return this;
+    }
+}
