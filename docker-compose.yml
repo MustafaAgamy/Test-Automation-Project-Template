@@ -1,0 +1,21 @@
+services:
+  selenium-hub:
+    image: selenium/hub:4.39.0-20251212
+    ports:
+      - "4444:4444"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  chrome:
+    image: selenium/node-chrome:4.39.0-20251212
+    shm_size: 2gb
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443

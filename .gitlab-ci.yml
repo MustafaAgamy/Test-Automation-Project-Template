@@ -1,0 +1,19 @@
+stages:
+  - test
+
+test:api:
+  stage: test
+  image: maven:3.9-eclipse-temurin-25
+  script:
+    - mvn test -Dgroups=api -DbaseUri=$APP_BASE_URI -DapiKey=$APP_API_KEY
+
+test:browser:
+  stage: test
+  image: maven:3.9-eclipse-temurin-25
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+  script:
+    - docker compose up -d
+    - mvn test -Dgroups=browser -DbaseUri=$APP_BASE_URI -DapiKey=$APP_API_KEY -DexecutionAddress=http://docker:4444
