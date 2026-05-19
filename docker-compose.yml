@@ -1,4 +1,14 @@
 services:
+  mock-app:
+    build: ./mock-app
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://localhost:3000/"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
   selenium-hub:
     image: selenium/hub:4.39.0-20251212
     ports:
