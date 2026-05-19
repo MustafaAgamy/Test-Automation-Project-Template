@@ -3,6 +3,10 @@
 A ready-to-use Java test automation template built on top of [SHAFT Engine](https://github.com/ShaftHQ/SHAFT_ENGINE).
 Use it as a starting point for new projects or as a teaching reference for SHAFT Engine patterns.
 
+> **Note:** This project represents one valid way to structure a test automation project — not the only way.
+> Design decisions around folder structure, naming conventions, abstractions, and tooling will vary from project to project depending on team size, application complexity, tech stack, and testing goals.
+> Treat this as a reference, not a standard.
+
 > **SHAFT Engine User Guide:** https://shafthq.github.io/SHAFT_ENGINE/
 
 ---
