@@ -1,7 +1,0 @@
-{
-  "customer": {
-    "name": "Demo Customer",
-    "email": "customer@example.com"
-  },
-  "successMessage": "Customer created successfully"
-}
