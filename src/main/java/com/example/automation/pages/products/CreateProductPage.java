@@ -31,26 +31,21 @@ public class CreateProductPage {
 
     @Step("Type product name")
     public CreateProductPage createProduct(String name, String sku, String price) {
-        CustomMethods.setValueForControlledInput(driver, nameField,
-                name + TestData.getString(TestData.TestDataKey.UUID));
-        CustomMethods.setValueForControlledInput(driver, skuField,
-                sku + TestData.getString(TestData.TestDataKey.UUID));
-        driver.element().type(priceField, price);
-        driver.element().click(saveButton);
+        typeName(name)
+            .typeSku(sku)
+            .typePrice(price);
         return this;
     }
 
     @Step("Type product name")
     public CreateProductPage typeName(String name) {
-        CustomMethods.setValueForControlledInput(driver, nameField,
-                name + TestData.getString(TestData.TestDataKey.UUID));
+        driver.element().type(nameField, name + TestData.getString(TestData.TestDataKey.UUID));
         return this;
     }
 
     @Step("Type product SKU")
     public CreateProductPage typeSku(String sku) {
-        CustomMethods.setValueForControlledInput(driver, skuField,
-                sku + TestData.getString(TestData.TestDataKey.UUID));
+        driver.element().type(skuField, sku + TestData.getString(TestData.TestDataKey.UUID));
         return this;
     }
 

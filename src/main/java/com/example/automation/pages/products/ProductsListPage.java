@@ -1,6 +1,7 @@
 package com.example.automation.pages.products;
 
 import com.example.automation.utils.BrowserActions;
+import com.example.automation.utils.TestData;
 import com.shaft.driver.SHAFT;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
@@ -23,9 +24,9 @@ public class ProductsListPage {
         return this;
     }
 
-    @Step("Search for product: {name}")
+    @Step("Search for product: {name} + TimeStamp")
     public ProductsListPage searchForProduct(String name) {
-        driver.element().type(searchNameField, name);
+        driver.element().type(searchNameField, name + TestData.getString(TestData.TestDataKey.UUID));
         driver.element().click(filterButton);
         return this;
     }
