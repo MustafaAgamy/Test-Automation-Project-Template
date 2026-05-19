@@ -24,7 +24,7 @@ public class ProductE2ETest extends BaseE2ETest {
     private final ThreadLocal<SHAFT.API> api = new ThreadLocal<>();
     private SHAFT.TestData.JSON testData;
 
-    @Test(description = "Create a product via the UI and verify the success message")
+    @Test(groups = {"browser"}, description = "Create a product via the UI and verify the success message")
     public void createProductViaUi() {
         new CreateProductPage(driver.get())
                 .navigateToCreateProduct()
@@ -35,7 +35,7 @@ public class ProductE2ETest extends BaseE2ETest {
                 .validateCreatedSuccessfully(testData.getTestData("successMessage"));
     }
 
-    @Test(description = "A product created via API appears in the products list")
+    @Test(groups = {"browser"}, description = "A product created via API appears in the products list")
     public void createdProductAppearsInList() {
         new ProductsApiHelper(api.get())
                 .createProduct(

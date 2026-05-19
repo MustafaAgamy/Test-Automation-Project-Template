@@ -21,7 +21,7 @@ public class CreateProductApiTest {
     private final ThreadLocal<SHAFT.API> api = new ThreadLocal<>();
     private SHAFT.TestData.JSON testData;
 
-    @Test(description = "Creating a product returns HTTP 201 with the created object")
+    @Test(groups = {"api"}, description = "Creating a product returns HTTP 201 with the created object")
     public void createProductReturns201() {
         new ProductsApiHelper(api.get())
                 .createProduct(
@@ -34,7 +34,7 @@ public class CreateProductApiTest {
                 .contains(testData.getTestData("product.name"));
     }
 
-    @Test(description = "Getting the products list returns HTTP 200")
+    @Test(groups = {"api"}, description = "Getting the products list returns HTTP 200")
     public void getProductsReturnsList() {
         new ProductsApiHelper(api.get()).getProducts();
         Assert.assertEquals(api.get().getResponse().getStatusCode(), 200,
