@@ -4,6 +4,10 @@ const path = require('path');
 
 const app = express();
 
+const IDLE_MS = 5 * 60 * 1000; // shut down after 5 min of no requests
+let idleTimer = setTimeout(() => { console.log('Idle timeout — shutting down'); process.exit(0); }, IDLE_MS);
+app.use((_req, _res, next) => { clearTimeout(idleTimer); idleTimer = setTimeout(() => { console.log('Idle timeout — shutting down'); process.exit(0); }, IDLE_MS); next(); });
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
