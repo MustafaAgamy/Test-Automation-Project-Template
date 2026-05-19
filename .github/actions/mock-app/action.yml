@@ -1,0 +1,17 @@
+name: Start Mock App
+description: Set up Node.js and start the mock app on port 3000
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Start mock app
+      shell: bash
+      run: |
+        cd mock-app && npm ci --silent
+        node server.js &
+        timeout 30 bash -c 'until curl -sf http://localhost:3000/ > /dev/null; do sleep 1; done'
+        echo "Mock app ready"
