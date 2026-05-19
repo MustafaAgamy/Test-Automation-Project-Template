@@ -1,5 +1,6 @@
 node_modules/
 target/
+.idea/
 
 # SHAFT Engine generated artifacts
 allure-report/
@@ -10,14 +11,6 @@ generate_allure_report.bat
 log/
 performanceReport/
 
-# SHAFT Engine auto-generated property files (do not track — SHAFT overwrites on each run)
-src/main/resources/properties/default/cucumber.properties
-src/main/resources/properties/default/customWebdriverCapabilities.properties
-src/main/resources/properties/default/junit-platform.properties
-src/main/resources/properties/default/reportportal.properties
-src/test/resources/META-INF/services/io.qameta.allure.listener.ContainerLifecycleListener
-src/test/resources/META-INF/services/io.qameta.allure.listener.FixtureLifecycleListener
-src/test/resources/META-INF/services/io.qameta.allure.listener.StepLifecycleListener
-src/test/resources/META-INF/services/io.qameta.allure.listener.TestLifecycleListener
-src/test/resources/META-INF/services/org.testng.IAnnotationTransformer
-src/test/resources/META-INF/services/uuid
+# SHAFT Engine rewrites the default/ directory on every run — track root-level copies instead
+src/main/resources/properties/default/
+src/test/resources/META-INF/
