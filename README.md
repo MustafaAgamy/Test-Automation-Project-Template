@@ -183,6 +183,24 @@ Workflow file: [`.github/workflows/tests.yml`](.github/workflows/tests.yml)
 
 ---
 
+## Postman collection
+
+[`postman_collection.json`](postman_collection.json) covers all mock app endpoints and can be imported directly into Postman.
+
+**Import:** Postman → Import → select `postman_collection.json`
+
+**Collection variables** (edit under the collection's Variables tab):
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `baseUrl` | `http://localhost:3000` | Mock app base URL |
+| `apiKey` | `demo-api-key` | Sent as `API-KEY` header on every Products request |
+| `sessionCookie` | _(empty)_ | Auto-populated by the Login or Get Token request |
+
+**Auth:** run **Login** or **Get Token** first — their test scripts save the session into `sessionCookie`. All Products requests use the `API-KEY` header by default and work without a prior login.
+
+---
+
 ## Built with
 
 - [SHAFT Engine](https://github.com/ShaftHQ/SHAFT_ENGINE) — Java test automation framework
