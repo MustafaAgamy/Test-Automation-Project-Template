@@ -30,8 +30,6 @@ public class TestData {
 
     public enum TestDataKey {
         UUID,
-        PRODUCT_ID,
-        CUSTOMER_ID,
-        ORDER_ID
+        PRODUCT_ID
     }
 }
