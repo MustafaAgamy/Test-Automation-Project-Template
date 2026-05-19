@@ -48,7 +48,11 @@ app.get('/api/auth/token', (req, res) => {
 // ── Products API ──────────────────────────────────────────────────────────────
 
 app.get('/api/products', requireAuth, (req, res) => {
-  res.json(products);
+  const { search } = req.query;
+  const result = search
+    ? products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+    : products;
+  res.json(result);
 });
 
 app.post('/api/products', requireAuth, (req, res) => {
