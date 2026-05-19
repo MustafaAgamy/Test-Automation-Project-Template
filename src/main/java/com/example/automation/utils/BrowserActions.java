@@ -14,6 +14,14 @@ public class BrowserActions {
     private BrowserActions() {
     }
 
+    /**
+     * Navigates to a protected URL by injecting the session cookie obtained via
+     * {@link com.example.automation.apis.auth.SessionHelper#login()} (Path 1 — API login).
+     *
+     * <p>Bypass alternative (Path 2): call {@code GET /api/auth/token} to receive
+     * {@code {"name":"session","value":"..."}} — inject that cookie directly and
+     * navigate without any credentials. Useful for exploratory testing or CI smoke checks.
+     */
     @Step("Navigate with Authentication")
     public static BrowserActions navigateV3(SHAFT.GUI.WebDriver driver, String url) {
         driver.browser().navigateToURL(System.getProperty("baseUri"));

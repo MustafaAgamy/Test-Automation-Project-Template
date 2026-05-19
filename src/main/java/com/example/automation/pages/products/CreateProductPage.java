@@ -11,19 +11,21 @@ public class CreateProductPage {
 
     private final SHAFT.GUI.WebDriver driver;
 
-    private final By nameField = By.id("product_name");
-    private final By skuField = By.id("product_sku");
-    private final By priceField = By.id("product_price");
-    private final By saveButton = By.cssSelector("button.save-product");
+    private final By createButton   = By.id("create-product-btn");
+    private final By nameField      = By.id("product-name");
+    private final By skuField       = By.id("product-sku");
+    private final By priceField     = By.id("product-price");
+    private final By saveButton     = By.id("save-product-btn");
     private final By successMessage = By.cssSelector(".alert-success");
 
     public CreateProductPage(SHAFT.GUI.WebDriver driver) {
         this.driver = driver;
     }
 
-    @Step("Navigate to create product page")
+    @Step("Navigate to products and open create form")
     public CreateProductPage navigateToCreateProduct() {
-        BrowserActions.navigateV3(driver, System.getProperty("baseUri") + "products/new");
+        BrowserActions.navigateV3(driver, System.getProperty("baseUri") + "products");
+        driver.element().click(createButton);
         return this;
     }
 
