@@ -1,7 +1,8 @@
 {
   "product": {
     "name": "Demo Product",
-    "sku": "SKU-"
+    "sku": "SKU-",
+    "price" : "25.00"
   },
   "successMessage": "Product created successfully",
   "approvedStatus": "active"

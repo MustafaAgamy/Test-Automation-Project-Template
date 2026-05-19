@@ -27,7 +27,7 @@ public class CreateProductApiTest {
                 .createProduct(
                         testData.getTestData("product.name"),
                         testData.getTestData("product.sku"),
-                        "25.00");
+                        testData.getTestData("product.price"));
         Assert.assertEquals(api.get().getResponse().getStatusCode(), 201,
                 "Expected HTTP 201 Created");
         api.get().assertThatResponse().body()

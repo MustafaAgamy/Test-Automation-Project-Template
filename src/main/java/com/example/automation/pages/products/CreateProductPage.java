@@ -30,6 +30,17 @@ public class CreateProductPage {
     }
 
     @Step("Type product name")
+    public CreateProductPage createProduct(String name, String sku, String price) {
+        CustomMethods.setValueForControlledInput(driver, nameField,
+                name + TestData.getString(TestData.TestDataKey.UUID));
+        CustomMethods.setValueForControlledInput(driver, skuField,
+                sku + TestData.getString(TestData.TestDataKey.UUID));
+        driver.element().type(priceField, price);
+        driver.element().click(saveButton);
+        return this;
+    }
+
+    @Step("Type product name")
     public CreateProductPage typeName(String name) {
         CustomMethods.setValueForControlledInput(driver, nameField,
                 name + TestData.getString(TestData.TestDataKey.UUID));
@@ -56,7 +67,7 @@ public class CreateProductPage {
     }
 
     @Step("Validate product was created successfully")
-    public CreateProductPage validateCreatedSuccessfully(String expectedMessage) {
+    public CreateProductPage validateProductCreatedSuccessfully(String expectedMessage) {
         driver.assertThat().element(successMessage).text().isEqualTo(expectedMessage);
         return this;
     }

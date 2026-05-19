@@ -28,20 +28,16 @@ public class ProductE2ETest extends BaseE2ETest {
     public void createProductViaUi() {
         new CreateProductPage(driver.get())
                 .navigateToCreateProduct()
-                .typeName(testData.getTestData("product.name"))
-                .typeSku(testData.getTestData("product.sku"))
-                .typePrice("25.00")
-                .save()
-                .validateCreatedSuccessfully(testData.getTestData("successMessage"));
+                .createProduct(testData.getTestData("product.name"),
+                        testData.getTestData("product.sku"), testData.getTestData("product.price"))
+                .validateProductCreatedSuccessfully(testData.getTestData("successMessage"));
     }
 
     @Test(groups = {"browser"}, description = "A product created via API appears in the products list")
     public void createdProductAppearsInList() {
         new ProductsApiHelper(api.get())
-                .createProduct(
-                        testData.getTestData("product.name"),
-                        testData.getTestData("product.sku"),
-                        "25.00");
+                .createProduct(testData.getTestData("product.name"),
+                        testData.getTestData("product.sku"), testData.getTestData("product.price"));
 
         new ProductsListPage(driver.get())
                 .navigateToProductsList()
