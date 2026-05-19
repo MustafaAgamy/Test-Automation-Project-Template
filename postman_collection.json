@@ -1,0 +1,158 @@
+{
+  "info": {
+    "name": "Test Automation Project Template",
+    "description": "Mock app API — http://localhost:3000\n\nAuth options:\n- API key: add header `API-KEY: {{apiKey}}` (pre-filled on every Products request)\n- Session cookie: run **Login** first; the test script stores the cookie in `sessionCookie` automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "demo-api-key",
+      "type": "string"
+    },
+    {
+      "key": "sessionCookie",
+      "value": "",
+      "type": "string",
+      "description": "Populated automatically by the Login or Get Token requests."
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const cookie = pm.cookies.get('session');",
+                  "if (cookie) {",
+                  "    pm.collectionVariables.set('sessionCookie', cookie);",
+                  "    console.log('Session cookie saved:', cookie);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@example.com\",\n  \"password\": \"changeme\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticates with email and password. Returns a `session` cookie.\nThe test script stores the cookie value in the `sessionCookie` collection variable."
+          }
+        },
+        {
+          "name": "Get Token (Bypass)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body && body.value) {",
+                  "    pm.collectionVariables.set('sessionCookie', body.value);",
+                  "    console.log('Session token saved:', body.value);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/token",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "token"]
+            },
+            "description": "Returns the session token without requiring credentials — useful for exploratory testing or CI smoke checks.\nThe test script stores the token value in the `sessionCookie` collection variable."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            },
+            "description": "Returns all products. Requires auth via `API-KEY` header or `session` cookie."
+          }
+        },
+        {
+          "name": "Search Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "API-KEY", "value": "{{apiKey}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products?search=Widget",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Widget",
+                  "description": "Case-insensitive substring match on product name."
+                }
+              ]
+            },
+            "description": "Returns products whose name contains the `search` value (case-insensitive substring match)."
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "API-KEY", "value": "{{apiKey}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Demo Product\",\n  \"sku\": \"SKU-001\",\n  \"price\": \"25.00\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            },
+            "description": "Creates a new product. Returns 201 with the created product object."
+          }
+        }
+      ]
+    }
+  ]
+}
