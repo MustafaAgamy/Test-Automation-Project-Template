@@ -14,6 +14,7 @@ Use it as a starting point for new projects or as a teaching reference for SHAFT
 | API helper | `ProductsApiHelper` | Create / list products via REST |
 | Page objects | `LoginPage`, `CreateProductPage`, `ProductsListPage` | Browser interactions |
 | Auth | `SessionHelper`, `BrowserActions` | API login + cookie injection (see Auth Paths below) |
+| Tests | `BaseE2ETest` | Suite-level setup — authenticates once, caches session for all tests |
 | Tests | `CreateProductApiTest` | API-level tests (group `api`) |
 | Tests | `ProductE2ETest` | End-to-end browser tests (group `browser`) |
 | Utilities | `TestData`, `CustomMethods` | Shared test data store and helpers |
@@ -42,6 +43,7 @@ src/
 
   test/java/com/example/automation/
     tests/
+      BaseE2ETest.java                 ← @BeforeSuite: API login, session cache
       api/CreateProductApiTest.java    ← group: api
       e2e/ProductE2ETest.java          ← group: browser
   test/resources/testDataFiles/
@@ -50,6 +52,13 @@ src/
     E2E/Product.json
 
 mock-app/                         ← self-contained Node.js target app
+
+.github/
+  actions/
+    java-setup/action.yml         ← composite: setup-java with Maven cache
+    mock-app/action.yml           ← composite: setup-node + start mock app
+  workflows/
+    tests.yml                     ← CI pipeline
 ```
 
 ---
@@ -78,16 +87,25 @@ node server.js
 
 **Endpoints:**
 
-| Method | Path            | Auth | Description                   |
-|--------|-----------------|------|-------------------------------|
-| POST   | /api/auth/login | No   | Returns `session` cookie      |
-| GET    | /api/auth/token | No   | Returns bypass token          |
-| GET    | /api/products   | Yes  | Returns products array        |
-| POST   | /api/products   | Yes  | Creates product, returns 201  |
-| GET    | /products       | Page | Products page                 |
-| GET    | /              | No   | Login page                    |
+| Method | Path                          | Auth | Description                                        |
+|--------|-------------------------------|------|----------------------------------------------------|
+| POST   | /api/auth/login               | No   | Returns `session` cookie                           |
+| GET    | /api/auth/token               | No   | Returns bypass token                               |
+| GET    | /api/products                 | Yes  | Returns all products                               |
+| GET    | /api/products?search=`<name>` | Yes  | Returns products filtered by name (case-insensitive substring match) |
+| POST   | /api/products                 | Yes  | Creates product, returns 201                       |
+| GET    | /products                     | Page | Products page                                      |
+| GET    | /                             | No   | Login page                                         |
 
 Auth = cookie `session=a1b2c3d4e5f6` **or** header `API-KEY: demo-api-key`.
+
+**Products page UI:**
+
+| Element | Selector | Description |
+|---------|----------|-------------|
+| Search field | `#search-name` | Type a product name to filter by |
+| Filter button | `#filter-btn` | Submits the search — also triggered by pressing Enter |
+| Create Product button | `#create-product-btn` | Shows the new product form |
 
 ---
 
@@ -140,16 +158,26 @@ docker compose down
 
 ## CI — GitHub Actions
 
-Two jobs run in parallel on every push and pull request:
+Three jobs run on every push and pull request:
 
-| Job | What it does |
-|-----|-------------|
-| **API Tests** | Starts mock app on the runner, runs `mvn test -Dgroups=api` |
-| **Browser Tests** | Starts mock app on the runner + Selenium Grid in Docker, runs `mvn test -Dgroups=browser` |
+| Job | Needs | What it does |
+|-----|-------|-------------|
+| **Compile Check** | — | Checks out and compiles the project; blocks the test jobs if compilation fails |
+| **API Tests** | Compile Check | Starts mock app on the runner, runs `mvn test -Dgroups=api` |
+| **Browser Tests** | Compile Check | Starts mock app + Selenium Grid in Docker, runs `mvn test -Dgroups=browser` |
 
-Allure results are uploaded as artifacts (`allure-results-api`, `allure-results-browser`) after every run, including failures.
+The two test jobs run in parallel once the compile check passes.
+
+Allure HTML reports are uploaded as artifacts (`allure-report-api`, `allure-report-browser`) after every run, including failures. Artifacts are retained for 7 days.
 
 The browser job passes the host's primary IP (`hostname -I`) as `baseUri` so Chrome containers inside Docker can reach the mock app running on the runner host.
+
+**Composite actions** (`.github/actions/`) keep the workflow DRY:
+
+| Action | Used by | Steps |
+|--------|---------|-------|
+| `java-setup` | All three jobs | `actions/checkout` + `actions/setup-java` (JDK 25, Temurin, Maven cache) |
+| `mock-app` | API Tests, Browser Tests | `actions/setup-node` (Node 20) + install deps + start server + health check |
 
 Workflow file: [`.github/workflows/tests.yml`](.github/workflows/tests.yml)
 
