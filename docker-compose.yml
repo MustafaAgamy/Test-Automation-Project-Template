@@ -13,10 +13,6 @@ services:
     image: selenium/hub:4.39.0-20251212
     ports:
       - "4444:4444"
-    environment:
-      # Tells the Hub its externally-accessible URL so BiDi WebSocket relay
-      # URLs use localhost:4444 instead of the Docker-internal hostname.
-      - SE_OPTS=--grid-url http://localhost:4444
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
       interval: 5s

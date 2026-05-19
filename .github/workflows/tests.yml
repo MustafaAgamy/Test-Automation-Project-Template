@@ -89,6 +89,12 @@ jobs:
           timeout 30 bash -c 'until curl -sf http://localhost:3000/ > /dev/null; do sleep 1; done'
           echo "Mock app ready"
 
+      # The Hub's BiDi WebSocket relay URL contains "selenium-hub" (the
+      # Docker hostname). Adding it to /etc/hosts lets the Maven process
+      # resolve it to the published port without Grid config changes.
+      - name: Map selenium-hub hostname to localhost
+        run: echo "127.0.0.1 selenium-hub" | sudo tee -a /etc/hosts
+
       - name: Start Selenium Grid
         run: docker compose up -d selenium-hub chrome
 
