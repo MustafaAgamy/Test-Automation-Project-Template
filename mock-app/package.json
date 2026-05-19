@@ -1,0 +1,13 @@
+{
+  "name": "mock-app",
+  "version": "1.0.0",
+  "description": "Self-contained mock app for SHAFT Engine template demos",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "express": "^4.18.2"
+  }
+}
