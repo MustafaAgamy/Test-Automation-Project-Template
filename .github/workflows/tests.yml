@@ -89,24 +89,20 @@ jobs:
           timeout 30 bash -c 'until curl -sf http://localhost:3000/ > /dev/null; do sleep 1; done'
           echo "Mock app ready"
 
-      # The Hub's BiDi WebSocket relay URL contains "selenium-hub" (the
-      # Docker hostname). Adding it to /etc/hosts lets the Maven process
-      # resolve it to the published port without Grid config changes.
-      - name: Map selenium-hub hostname to localhost
-        run: echo "127.0.0.1 selenium-hub" | sudo tee -a /etc/hosts
+      # Chrome runs inside Docker; both Maven (host) and Chrome must reach
+      # the mock app and the Grid via the host's primary IP.
+      - name: Resolve host IP for Docker containers
+        run: echo "HOST_IP=$(hostname -I | awk '{print $1}')" >> $GITHUB_ENV
 
+      # SE_NODE_GRID_URL tells the Chrome node what externally-accessible
+      # Grid URL to advertise when registering. The Hub embeds this in the
+      # webSocketUrl capability returned to the Selenium client (used by
+      # SHAFT's BiDi navigation). Must be set before the node starts.
       - name: Start Selenium Grid
-        run: docker compose up -d selenium-hub chrome
+        run: SE_NODE_GRID_URL=http://$HOST_IP:4444 docker compose up -d selenium-hub chrome
 
       - name: Wait for Selenium Grid
         run: timeout 60 bash -c 'until curl -sf http://localhost:4444/wd/hub/status > /dev/null; do sleep 2; done'
-
-      # Mock app runs on the host but Chrome runs inside Docker.
-      # Chrome cannot use "localhost" (its own loopback), so we pass the
-      # host's primary IP so both Maven API calls and Chrome navigation
-      # reach the same mock app instance.
-      - name: Resolve host IP for Docker containers
-        run: echo "HOST_IP=$(hostname -I | awk '{print $1}')" >> $GITHUB_ENV
 
       - name: Run browser tests
         run: |

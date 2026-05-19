@@ -18,6 +18,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 12
+      start_period: 10s
 
   chrome:
     image: selenium/node-chrome:4.39.0-20251212
@@ -29,3 +30,12 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      # Externally-accessible Grid URL — used by the node when registering
+      # its BiDi endpoint. The Hub embeds this in the webSocketUrl capability
+      # returned to the client. Must be reachable from the test runner.
+      # Override at runtime for CI: SE_NODE_GRID_URL=http://<host-ip>:4444
+      - SE_NODE_GRID_URL=${SE_NODE_GRID_URL:-http://localhost:4444}
+      - SE_NODE_MAX_SESSIONS=2
+      - SE_NODE_MAX_INSTANCES=2
+      - SE_NODE_CONNECTION_LIMIT_PER_SESSION=1000
+      - SE_NODE_SESSION_TIMEOUT=1800
