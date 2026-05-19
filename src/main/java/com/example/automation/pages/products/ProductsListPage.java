@@ -1,8 +1,6 @@
 package com.example.automation.pages.products;
 
 import com.example.automation.utils.BrowserActions;
-import com.example.automation.utils.CustomMethods;
-import com.example.automation.utils.TestData;
 import com.shaft.driver.SHAFT;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
@@ -11,7 +9,9 @@ public class ProductsListPage {
 
     private final SHAFT.GUI.WebDriver driver;
 
-    private final By statusBadge = By.cssSelector("td.product-status span");
+    private final By searchNameField = By.cssSelector("#search-name");
+    private final By filterButton    = By.cssSelector("#filter-btn");
+    private final By statusBadge     = By.cssSelector("td.product-status span");
 
     public ProductsListPage(SHAFT.GUI.WebDriver driver) {
         this.driver = driver;
@@ -23,11 +23,10 @@ public class ProductsListPage {
         return this;
     }
 
-    @Step("Search for product")
+    @Step("Search for product: {name}")
     public ProductsListPage searchForProduct(String name) {
-        CustomMethods.searchForRecord(driver,
-                System.getProperty("baseUri") + "products?search=",
-                name + TestData.getString(TestData.TestDataKey.UUID));
+        driver.element().type(searchNameField, name);
+        driver.element().click(filterButton);
         return this;
     }
 
