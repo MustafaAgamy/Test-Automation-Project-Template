@@ -1,5 +1,6 @@
 package com.example.automation.tests.e2e;
 
+import com.example.automation.apis.products.ProductsApiHelper;
 import com.example.automation.pages.products.CreateProductPage;
 import com.example.automation.pages.products.ProductsListPage;
 import com.example.automation.tests.BaseE2ETest;
@@ -23,8 +24,8 @@ public class ProductE2ETest extends BaseE2ETest {
     private final ThreadLocal<SHAFT.API> api = new ThreadLocal<>();
     private SHAFT.TestData.JSON testData;
 
-    @Test(description = "Verify a product can be created via UI")
-    public void verifyCreateProduct() {
+    @Test(description = "Create a product via the UI and verify the success message")
+    public void createProductViaUi() {
         new CreateProductPage(driver.get())
                 .navigateToCreateProduct()
                 .typeName(testData.getTestData("product.name"))
@@ -32,8 +33,18 @@ public class ProductE2ETest extends BaseE2ETest {
                 .typePrice("25.00")
                 .save()
                 .validateCreatedSuccessfully(testData.getTestData("successMessage"));
+    }
+
+    @Test(description = "A product created via API appears in the products list")
+    public void createdProductAppearsInList() {
+        new ProductsApiHelper(api.get())
+                .createProduct(
+                        testData.getTestData("product.name"),
+                        testData.getTestData("product.sku"),
+                        "25.00");
 
         new ProductsListPage(driver.get())
+                .navigateToProductsList()
                 .searchForProduct(testData.getTestData("product.name"))
                 .validateProductStatus(testData.getTestData("approvedStatus"));
     }

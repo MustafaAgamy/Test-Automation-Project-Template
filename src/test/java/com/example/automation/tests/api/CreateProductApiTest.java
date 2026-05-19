@@ -7,6 +7,7 @@ import com.shaft.driver.SHAFT;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -20,14 +21,24 @@ public class CreateProductApiTest {
     private final ThreadLocal<SHAFT.API> api = new ThreadLocal<>();
     private SHAFT.TestData.JSON testData;
 
-    @Test(description = "Verify a product can be created via API")
-    public void verifyCreateProduct() {
+    @Test(description = "Creating a product returns HTTP 201 with the created object")
+    public void createProductReturns201() {
         new ProductsApiHelper(api.get())
                 .createProduct(
                         testData.getTestData("product.name"),
                         testData.getTestData("product.sku"),
-                        "25.00")
-                .validateProductCreated(testData.getTestData("product.name"));
+                        "25.00");
+        Assert.assertEquals(api.get().getResponse().getStatusCode(), 201,
+                "Expected HTTP 201 Created");
+        api.get().assertThatResponse().body()
+                .contains(testData.getTestData("product.name"));
+    }
+
+    @Test(description = "Getting the products list returns HTTP 200")
+    public void getProductsReturnsList() {
+        new ProductsApiHelper(api.get()).getProducts();
+        Assert.assertEquals(api.get().getResponse().getStatusCode(), 200,
+                "Expected HTTP 200 OK");
     }
 
     @BeforeClass(alwaysRun = true)
