@@ -9,6 +9,9 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Browser-level setup actions that span page boundaries, such as authenticated navigation.
+ */
 public class BrowserActions {
 
     private BrowserActions() {
@@ -18,9 +21,16 @@ public class BrowserActions {
      * Navigates to a protected URL by injecting the session cookie obtained via
      * {@link com.example.automation.apis.auth.SessionHelper#login()} (Path 1 — API login).
      *
+     * <p>The browser is first sent to {@code baseUri} so the cookie domain matches
+     * before it is added; adding a cookie before any navigation would be rejected
+     * by the browser's same-origin policy.
+     *
      * <p>Bypass alternative (Path 2): call {@code GET /api/auth/token} to receive
      * {@code {"name":"session","value":"..."}} — inject that cookie directly and
      * navigate without any credentials. Useful for exploratory testing or CI smoke checks.
+     *
+     * @param driver the SHAFT WebDriver instance
+     * @param url    the full URL to navigate to after cookie injection
      */
     @Step("Navigate with Authentication")
     public static BrowserActions navigateV3(SHAFT.GUI.WebDriver driver, String url) {
@@ -33,6 +43,12 @@ public class BrowserActions {
         return new BrowserActions();
     }
 
+    /**
+     * Parses a raw {@code Set-Cookie} header string into a Selenium {@link Cookie}.
+     * Handles {@code Path}, {@code Domain}, {@code Secure}, and {@code HttpOnly} attributes.
+     *
+     * @param rawCookieHeader the full {@code Set-Cookie} header value
+     */
     private static Cookie buildCookie(String rawCookieHeader) {
         String[] parts = rawCookieHeader.split(";");
         String[] nameValue = parts[0].split("=", 2);
