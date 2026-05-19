@@ -13,37 +13,40 @@ public class ProductsApiHelper extends BaseApiHelper {
 
     @Step("Create Product")
     public ProductsApiHelper createProduct(String name, String sku, String price) {
-        String uuid = TestData.getString(TestData.TestDataKey.UUID);
         String body = SHAFT.CLI.file()
                 .readFile("src/test/resources/testDataFiles/APIs/CreateProduct.json")
-                .replace("{{name}}", name + uuid)
-                .replace("{{sku}}", sku + uuid)
+                .replace("{{name}}", name + TestData.getString(TestData.TestDataKey.UUID))
+                .replace("{{sku}}", sku + TestData.getString(TestData.TestDataKey.UUID))
                 .replace("{{price}}", price);
 
-        post("api/v1/products")
+        post("api/products")
                 .setRequestBody(body)
                 .perform();
 
-        TestData.set(TestData.TestDataKey.PRODUCT_ID, Integer.parseInt(api.getResponseJSONValue("product.id")));
+        TestData.set(TestData.TestDataKey.PRODUCT_ID,
+                Integer.parseInt(api.getResponseJSONValue("id")));
+        return this;
+    }
+
+    @Step("Get all products")
+    public ProductsApiHelper getProducts() {
+        get("api/products").perform();
         return this;
     }
 
     @Step("Validate product was created successfully")
     public ProductsApiHelper validateProductCreated(String expectedName) {
-        String uuid = TestData.getString(TestData.TestDataKey.UUID);
-        get("api/v1/products?per_page=100&page=1")
-                .perform();
+        get("api/products").perform();
         api.assertThatResponse()
-                .extractedJsonValue("products[?(@.id == '" +
-                        TestData.getString(TestData.TestDataKey.PRODUCT_ID) + "')].name")
-                .isEqualTo(expectedName + uuid);
+                .extractedJsonValue("[?(@.id == " +
+                        TestData.get(TestData.TestDataKey.PRODUCT_ID, Integer.class) + ")].name")
+                .isEqualTo(expectedName + TestData.getString(TestData.TestDataKey.UUID));
         return this;
     }
 
     @Step("Get product ID by name")
     public String getProductId(String name) {
-        get("api/v1/products?per_page=100&page=1")
-                .perform();
-        return api.getResponseJSONValue("products[?(@.name== '" + name + "')].id");
+        get("api/products").perform();
+        return api.getResponseJSONValue("[?(@.name== '" + name + "')].id");
     }
 }

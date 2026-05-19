@@ -20,7 +20,7 @@ public class SessionHelper extends BaseApiHelper {
             String body = SHAFT.CLI.file().readFile("src/test/resources/testDataFiles/Auth/Login.json")
                     .replace("{{email}}", System.getProperty("testEmail"))
                     .replace("{{password}}", System.getProperty("testPassword"));
-            post("api/v1/auth/login")
+            post("api/auth/login")
                     .setRequestBody(body)
                     .perform();
             sessionCookie = api.getResponse().header("Set-Cookie");
